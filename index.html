@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 适配移动端 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试主页 - Demo Website</title>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        /* 导航栏样式 */
+        nav {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 999;
+        }
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 16px;
+        }
+        .nav-links a:hover {
+            color: #3498db;
+        }
+
+        /* 横幅区域 */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("https://picsum.photos/1920/1080");
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 0 20px;
+            margin-top: 60px;
+        }
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+        .btn {
+            padding: 12px 30px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        /* 功能卡片区 */
+        .features {
+            padding: 80px 5%;
+            text-align: center;
+        }
+        .features h2 {
+            font-size: 32px;
+            margin-bottom: 50px;
+            color: #2c3e50;
+        }
+        .card-box {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .card {
+            width: 300px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .card h3 {
+            margin: 20px 0;
+            color: #3498db;
+        }
+
+        /* 页脚 */
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 25px 0;
+            margin-top: 30px;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+            nav {
+                flex-direction: column;
+                padding: 10px;
+            }
+            .nav-links {
+                margin-top: 10px;
+            }
+            .nav-links a {
+                margin: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="logo">测试网站</div>
+        <div class="nav-links">
+            <a href="#home">首页</a>
+            <a href="#about">关于</a>
+            <a href="#service">服务</a>
+            <a href="#contact">联系</a>
+        </div>
+    </nav>
+
+    <!-- 横幅区域 -->
+    <section class="hero" id="home">
+        <h1>欢迎来到测试主页</h1>
+        <p>这是一个用于网站测试的演示主页，支持电脑、手机端自适应，简约美观且开箱即用</p>
+        <button class="btn" id="testBtn">点击测试交互</button>
+    </section>
+
+    <!-- 功能卡片 -->
+    <section class="features" id="service">
+        <h2>核心功能</h2>
+        <div class="card-box">
+            <div class="card">
+                <h3>响应式布局</h3>
+                <p>自动适配电脑、平板、手机等所有设备屏幕</p>
+            </div>
+            <div class="card">
+                <h3>极简设计</h3>
+                <p>现代简约风格，无冗余代码，加载速度极快</p>
+            </div>
+            <div class="card">
+                <h3>测试专用</h3>
+                <p>完美用于服务器、域名、前端展示的基础测试</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <p>© 2026 测试网站 | 仅供演示测试使用</p>
+    </footer>
+
+    <script>
+        // 简单交互测试
+        const btn = document.getElementById('testBtn');
+        btn.addEventListener('click', () => {
+            alert('✅ 测试成功！按钮交互正常运行');
+        });
+    </script>
+</body>
+</html>
