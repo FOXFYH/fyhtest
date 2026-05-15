@@ -1,187 +1,2379 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <!-- 适配移动端 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>测试主页 - Demo Website</title>
-    <style>
-        /* 全局样式重置 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Microsoft YaHei", sans-serif;
-        }
-
-        /* 导航栏样式 */
-        nav {
-            background: #2c3e50;
-            color: white;
-            padding: 15px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 999;
-        }
-        .logo {
-            font-size: 22px;
-            font-weight: bold;
-        }
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            margin-left: 25px;
-            font-size: 16px;
-        }
-        .nav-links a:hover {
-            color: #3498db;
-        }
-
-        /* 横幅区域 */
-        .hero {
-            height: 100vh;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("https://picsum.photos/1920/1080");
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            text-align: center;
-            padding: 0 20px;
-            margin-top: 60px;
-        }
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-        .hero p {
-            font-size: 18px;
-            margin-bottom: 30px;
-            max-width: 600px;
-        }
-        .btn {
-            padding: 12px 30px;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .btn:hover {
-            background: #2980b9;
-        }
-
-        /* 功能卡片区 */
-        .features {
-            padding: 80px 5%;
-            text-align: center;
-        }
-        .features h2 {
-            font-size: 32px;
-            margin-bottom: 50px;
-            color: #2c3e50;
-        }
-        .card-box {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        .card {
-            width: 300px;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        }
-        .card h3 {
-            margin: 20px 0;
-            color: #3498db;
-        }
-
-        /* 页脚 */
-        footer {
-            background: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 25px 0;
-            margin-top: 30px;
-        }
-
-        /* 移动端适配 */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 32px;
-            }
-            nav {
-                flex-direction: column;
-                padding: 10px;
-            }
-            .nav-links {
-                margin-top: 10px;
-            }
-            .nav-links a {
-                margin: 0 10px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>思维导图编辑器</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;overflow:hidden;background:#f5f5f5;height:100vh;display:flex;flex-direction:column}
+#toolbar{background:#fff;border-bottom:1px solid #e0e0e0;padding:4px 8px;display:flex;align-items:center;gap:4px;flex-wrap:nowrap;overflow-x:auto;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+#toolbar .sep{width:1px;height:20px;background:#ddd;margin:0 3px;flex-shrink:0}
+#toolbar button{padding:3px 8px;border:1px solid #ccc;border-radius:3px;background:#fff;cursor:pointer;font-size:11px;font-family:inherit;transition:all .15s;white-space:nowrap;flex-shrink:0}
+#toolbar button:hover{background:#e8f0fe;border-color:#4A90D9}
+#toolbar button:active{background:#d0e0f8}
+#toolbar button.danger{color:#e74c3c}
+#toolbar button.danger:hover{background:#fde8e8;border-color:#e74c3c}
+#toolbar .zoom-btn{font-size:16px;font-weight:bold;width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center}
+#toolbar .fit-btn{font-size:14px;width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center}
+#toolbar .zoom-info{font-size:11px;color:#666;min-width:40px;text-align:center}
+#toolbar .clip-info{font-size:10px;color:#999;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dropdown{position:relative;display:inline-block}
+.dropdown-menu{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #ddd;border-radius:4px;box-shadow:0 4px 12px rgba(0,0,0,.15);min-width:100px;z-index:100;padding:2px 0}
+.dropdown-menu.show{display:block}
+.dropdown-item{padding:4px 10px;cursor:pointer;font-size:12px;white-space:nowrap}
+.dropdown-item:hover{background:#f0f4ff;color:#4a6cf7}
+.dropdown-item.danger{color:#e74c3c}
+.dropdown-item.danger:hover{background:#fef0ef}
+.dropdown-divider{height:1px;background:#eee;margin:2px 0}
+.file-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:6px;margin-bottom:4px;background:#f8f9fa;cursor:pointer;transition:background .15s}
+.file-item:hover{background:#e8f0fe}
+.file-item .file-name{font-size:13px;color:#333;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-item .file-time{font-size:11px;color:#999;margin-left:8px;white-space:nowrap}
+.file-item .file-del{font-size:12px;color:#e74c3c;cursor:pointer;margin-left:8px;padding:2px 6px;border-radius:3px}
+.file-item .file-del:hover{background:#fef0ef}
+.file-item.active{background:#e8f0fe;border:1px solid #4A90D9}
+#viewport{flex:1;position:relative;overflow:hidden;cursor:grab}
+#viewport.no-select{user-select:none;-webkit-user-select:none}
+#viewport.grabbing{cursor:grabbing}
+#viewport.dragging-node{cursor:move}
+#canvas{width:100%;height:100%}
+.mind-node{cursor:pointer}
+.mind-node:hover .node-bg{filter:brightness(.97)}
+.mind-node.selected .node-bg{box-shadow:0 0 0 2px #4A90D9;filter:brightness(.97)}
+.collapse-btn{cursor:pointer}
+.collapse-btn:hover circle{fill:#e0e0e0}
+.drag-ghost{opacity:.5;pointer-events:none}
+.drop-highlight{animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+#edit-modal,#import-modal,#file-modal,#sync-modal,#sync-conflict-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:200;justify-content:center;align-items:center}
+#edit-modal.show,#import-modal.show,#file-modal.show,#sync-modal.show,#sync-conflict-modal.show{display:flex}
+.modal-box{background:#fff;border-radius:10px;padding:20px;width:500px;max-width:90vw;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.modal-box h3{margin-bottom:12px;font-size:16px;color:#333}
+.modal-box label{display:block;font-size:13px;color:#555;margin-bottom:4px;margin-top:10px}
+.modal-box textarea{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:5px;font-size:13px;font-family:inherit;outline:none;transition:border .2s;resize:vertical}
+.modal-box textarea:focus{border-color:#4A90D9}
+.modal-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.modal-btns button{padding:6px 18px;border-radius:5px;border:1px solid #ccc;background:#fff;cursor:pointer;font-family:inherit;font-size:13px}
+.modal-btns button.primary{background:#4A90D9;color:#fff;border-color:#4A90D9}
+.modal-btns button.primary:hover{background:#3a7bc8}
+.modal-btns button:hover{background:#f0f0f0}
+#toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:8px 20px;border-radius:6px;font-size:13px;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}
+#toast.show{opacity:1}
+#context-menu{display:none;position:fixed;background:#fff;border-radius:4px;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:150;padding:2px 0;min-width:140px}
+#context-menu .menu-item{padding:4px 12px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px}
+#context-menu .menu-item:hover{background:#e8f0fe}
+#context-menu .menu-item.danger{color:#e74c3c}
+#context-menu .menu-sep{height:1px;background:#eee;margin:2px 0}
+.color-swatch{width:22px;height:22px;border-radius:4px;cursor:pointer;border:2px solid transparent;flex-shrink:0}
+.color-swatch:hover{border-color:#333}
+.color-swatch.selected{border-color:#333}
+.color-picker-row{display:flex;flex-wrap:wrap;gap:4px;padding:6px 12px;justify-content:flex-start;width:calc(5*24px + 4*4px)}
+#inline-editor{position:absolute;display:none;z-index:110}
+#inline-editor textarea{font-family:'Microsoft YaHei','PingFang SC',sans-serif;border:2px solid #4A90D9;border-radius:6px;outline:none;resize:none;padding:10px 12px 10px 18px;line-height:1.5;background:#fff;box-shadow:0 0 0 3px rgba(74,144,217,.15);overflow:hidden}
+</style>
 </head>
 <body>
-    <!-- 导航栏 -->
-    <nav>
-        <div class="logo">测试网站</div>
-        <div class="nav-links">
-            <a href="#home">首页</a>
-            <a href="#about">关于</a>
-            <a href="#service">服务</a>
-            <a href="#contact">联系</a>
-        </div>
-    </nav>
+<div id="toolbar">
+  <button onclick="zoomIn()" title="放大 (+=)" class="zoom-btn">+</button>
+  <button onclick="zoomOut()" title="缩小 (-)" class="zoom-btn">−</button>
+  <button onclick="fitScreen()" title="适应屏幕 (0)" class="fit-btn">⊞</button>
+  <button onclick="toggleFullscreen()" title="全屏 (F11)" class="fit-btn">⛶</button>
+  <span class="zoom-info" id="zoomInfo">100%</span>
+  <div class="sep"></div>
+  <button onclick="undo()" title="撤销 (Ctrl+Z)">↩</button>
+  <button onclick="redo()" title="重做 (Ctrl+Y)">↪</button>
+  <div class="sep"></div>
+  <button onclick="addSibling()" title="添加同级节点 (Enter)">+ 同级</button>
+  <button onclick="addChild()" title="添加子级节点 (Tab)">+ 子级</button>
+  <div class="sep"></div>
+  <div class="dropdown">
+    <button onclick="toggleDropdown()" title="操作菜单">⚙ ▾</button>
+    <div class="dropdown-menu" id="actionMenu">
+      <div class="dropdown-item" onclick="closeDropdown();editNodeModal()">✏️ 编辑</div>
+      <div class="dropdown-item danger" onclick="closeDropdown();deleteNode()">🗑️ 删除</div>
+      <div class="dropdown-divider"></div>
+      <div class="dropdown-item" onclick="closeDropdown();cutNode()">✂️ 剪切</div>
+      <div class="dropdown-item" onclick="closeDropdown();copyNode()">📋 复制</div>
+      <div class="dropdown-item" onclick="closeDropdown();pasteNode()">📌 粘贴</div>
+    </div>
+  </div>
+  <span class="clip-info" id="clipInfo"></span>
+  <div class="sep"></div>
+  <button onclick="createNewMap()">+ 新建</button>
+  <button onclick="loadFile()">📂 打开</button>
+  <button onclick="exportText()">📤 导出</button>
+  <button onclick="saveToLocal()">💾 保存</button>
+  <button onclick="openFileManagerFrame()">📁 文件</button>
+  <button onclick="syncToCloud()" id="syncBtn" title="同步到云端">☁ 同步</button>
+  <button onclick="showSyncSettings()" title="同步设置">⚙</button>
+  <button onclick="collapseAll()">折叠</button>
+  <button onclick="expandAll()">展开</button>
+  <input type="file" id="fileInput" accept=".txt" style="display:none" onchange="handleFile(event)">
+</div>
+<div id="viewport">
+  <svg id="canvas">
+    <defs>
+      <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+        <feDropShadow dx="1" dy="2" stdDeviation="3" flood-opacity="0.1"/>
+      </filter>
+    </defs>
+    <g id="world"></g>
+  </svg>
+</div>
+<div id="edit-modal">
+  <div class="modal-box">
+    <h3>编辑节点</h3>
+    <label>内容（首行加粗显示为标题，换行即正文）</label>
+    <textarea id="editText" rows="5" placeholder="第一行是标题&#10;后续行是内容"></textarea>
+    <div class="modal-btns">
+      <button onclick="closeEdit()">取消</button>
+      <button class="primary" onclick="saveEdit()">保存</button>
+    </div>
+  </div>
+</div>
+<div id="import-modal">
+  <div class="modal-box">
+    <h3>新建思维导图</h3>
+    <label>粘贴缩进文本（Tab缩进表示层级，留空则创建默认结构）</label>
+    <textarea id="importText" rows="8" placeholder="根节点&#10;&#9;子节点1&#9;补充说明\n&#10;第二行&#10;&#9;&#9;孙节点1"></textarea>
+    <div class="modal-btns">
+      <button onclick="closeImport()">取消</button>
+      <button class="primary" onclick="doImport()">创建</button>
+    </div>
+  </div>
+</div>
+<div id="sync-modal">
+  <div class="modal-box" style="width:400px">
+    <h3>☁️ 云同步设置</h3>
+    <label style="margin-top:8px">云函数地址（免令牌优先）</label>
+    <input id="syncApiUrl" type="text" placeholder="https://..." style="width:100%;padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:13px;margin-top:4px">
+    <label style="margin-top:10px">Webhook 地址（金山文档）</label>
+    <input id="syncWebhookUrl" type="text" placeholder="https://www.kdocs.cn/api/v3/ide/file/..." style="width:100%;padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:13px;margin-top:4px">
+    <label style="margin-top:10px">AirScript Token（直接发送模式需要）</label>
+    <input id="syncToken" type="text" placeholder="可选" style="width:100%;padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:13px;margin-top:4px">
+    <label style="margin-top:10px">自动保存间隔（秒，低于此间隔不许发起保存）</label>
+    <input id="syncAutoSaveInterval" type="number" value="5" min="1" max="60" style="width:100%;padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:13px;margin-top:4px">
+    <label style="margin-top:10px">云端检查间隔（分钟）</label>
+    <input id="syncCloudCheckInterval" type="number" value="5" min="1" max="60" style="width:100%;padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:13px;margin-top:4px">
+    <label style="margin-top:10px">同步差值（本地版本领先此值才自动上传）</label>
+    <input id="syncThreshold" type="number" value="5" min="1" max="20" style="width:100%;padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:13px;margin-top:4px">
+    <label style="margin-top:10px">重试次数（每个地址）</label>
+    <input id="syncRetryCount" type="number" value="5" min="1" max="10" style="width:100%;padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:13px;margin-top:4px">
+    <label style="margin-top:10px">重试间隔（秒）</label>
+    <input id="syncRetryInterval" type="number" value="2" min="1" max="10" style="width:100%;padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:13px;margin-top:4px">
+    <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
+      <input id="syncEnabled" type="checkbox" checked>
+      <label for="syncEnabled" style="margin:0">启用云同步</label>
+    </div>
+    <div class="modal-btns">
+      <button onclick="closeSyncSettings()">取消</button>
+      <button class="primary" onclick="saveSyncSettings()">保存</button>
+    </div>
+  </div>
+</div>
+<div id="sync-conflict-modal">
+  <div class="modal-box" style="width:380px">
+    <h3>⚠️ 版本冲突</h3>
+    <p style="font-size:13px;color:#666;margin:10px 0">云端有新版本，是否更新本地？</p>
+    <div style="background:#f5f5f5;padding:10px;border-radius:4px;font-size:12px;margin:10px 0">
+      <div>本地版本：<span id="localVersion">-</span></div>
+      <div>云端版本：<span id="cloudVersion">-</span></div>
+    </div>
+    <div class="modal-btns">
+      <button onclick="closeSyncConflict()">稍后处理</button>
+      <button onclick="saveConflictVersion()">保存冲突版本</button>
+      <button class="primary" onclick="acceptCloudVersion()">使用云端版本</button>
+    </div>
+  </div>
+</div>
+<div id="file-modal">
+  <div class="modal-box" style="width:600px;max-height:80vh;display:flex;flex-direction:column">
+    <h3>📁 文件管理</h3>
+    <iframe id="fileManagerFrame" style="flex:1;border:1px solid #ddd;border-radius:6px;min-height:300px;width:100%;display:none"></iframe>
+    <div id="fileManagerFallback" style="flex:1;overflow-y:auto;min-height:100px">
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <input id="fileNameInput" type="text" placeholder="输入文件名" style="flex:1;padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:13px">
+        <button class="primary" onclick="saveNamedFile()">保存</button>
+        <button onclick="renameCurrentFile()" title="重命名当前文件">重命名</button>
+      </div>
+      <div id="fileList" style="flex:1;overflow-y:auto;min-height:100px"></div>
+    </div>
+    <div class="modal-btns" style="margin-top:10px">
+      <button onclick="closeFileManager()">关闭</button>
+    </div>
+  </div>
+</div>
+<div id="context-menu">
+  <div class="menu-item" onclick="addSibling()">➕ 添加同级</div>
+  <div class="menu-item" onclick="addChild()">➕ 添加子级</div>
+  <div class="menu-item" onclick="editNodeModal()">✏️ 编辑(弹窗)</div>
+  <div class="menu-sep"></div>
+  <div class="menu-item" onclick="cutNode()">✂️ 剪切</div>
+  <div class="menu-item" onclick="copyNode()">📋 复制</div>
+  <div class="menu-item" onclick="copyAsStructuredText()">📝 复制为结构文本</div>
+  <div class="menu-item" onclick="pasteNode()">📌 粘贴</div>
+  <div class="menu-sep"></div>
+  <div id="color-picker-row" class="color-picker-row" style="display:none"></div>
+  <div class="menu-sep" id="color-sep" style="display:none;"></div>
+  <div class="menu-item" onclick="toggleCollapse()">🔄 折叠/展开</div>
+  <div class="menu-sep"></div>
+  <div class="menu-item danger" onclick="deleteNode()">🗑️ 删除</div>
+</div>
+<div id="toast"></div>
+<div id="inline-editor"><textarea></textarea></div>
+<script>
+const SVG_NS='http://www.w3.org/2000/svg';
+const H_GAP=70,V_GAP=2,NODE_PAD_H=8,NODE_PAD_V=2;
+const FONT_SIZE=13,DESC_FONT_SIZE=12;
+const FONT_STR=FONT_SIZE+'px Microsoft YaHei,PingFang SC,sans-serif';
+const DESC_FONT_STR=DESC_FONT_SIZE+'px Microsoft YaHei,PingFang SC,sans-serif';
+const LEVEL_COLORS=['#4A90D9','#50C878','#FF8C00','#E74C3C','#9B59B6','#1ABC9C','#E67E22','#7F8C8D'];
+const BRANCH_COLORS=['#C0392B','#E67E22','#F1C40F','#27AE60','#2980B9','#8E44AD','#1ABC9C','#D35400','#2C3E50','#E74C3C','#16A085','#9B59B6','#3498DB','#E91E63','#795548','#00BCD4'];
+const MAX_USED_COLORS=15;
+const MAX_NODE_WIDTH=600;
+const LINE_HEIGHT=FONT_SIZE+3;
+const DESC_LINE_HEIGHT=DESC_FONT_SIZE+2;
+const measureCtx=document.createElement('canvas').getContext('2d');
 
-    <!-- 横幅区域 -->
-    <section class="hero" id="home">
-        <h1>欢迎来到测试主页</h1>
-        <p>这是一个用于网站测试的演示主页，支持电脑、手机端自适应，简约美观且开箱即用</p>
-        <button class="btn" id="testBtn">点击测试交互</button>
-    </section>
+let root=null,selectedNode=null,nodeMap={};
+let panX=0,panY=0,zoom=1;
+let isPanning=false,panStartX=0,panStartY=0,panStartPanX=0,panStartPanY=0;
+let isDragging=false,dragNode=null,dragStartX=0,dragStartY=0;
+let longPressTimer=null;
+let dropTarget=null;
+let dropAction='child';
+let isResizing=false,resizeNode=null,resizeStartX=0,resizeStartW=0;
+let editingNodeId=null;
+let clipboard=null;
+let clipboardMode='';
+let usedBranchColors=new Set();
 
-    <!-- 功能卡片 -->
-    <section class="features" id="service">
-        <h2>核心功能</h2>
-        <div class="card-box">
-            <div class="card">
-                <h3>响应式布局</h3>
-                <p>自动适配电脑、平板、手机等所有设备屏幕</p>
-            </div>
-            <div class="card">
-                <h3>极简设计</h3>
-                <p>现代简约风格，无冗余代码，加载速度极快</p>
-            </div>
-            <div class="card">
-                <h3>测试专用</h3>
-                <p>完美用于服务器、域名、前端展示的基础测试</p>
-            </div>
-        </div>
-    </section>
+let undoStack=[];
+let redoStack=[];
+const MAX_HISTORY=50;
+let undoSuspended=false;
 
-    <!-- 页脚 -->
-    <footer>
-        <p>© 2026 测试网站 | 仅供演示测试使用</p>
-    </footer>
+// ===================== 多文件同步监督 =====================
+let activeFileName = null;  // 当前正在被同步监督的文件名
+let isFileManagerOpen = false;  // 文件管理页面是否打开
 
-    <script>
-        // 简单交互测试
-        const btn = document.getElementById('testBtn');
-        btn.addEventListener('click', () => {
-            alert('✅ 测试成功！按钮交互正常运行');
+// ===================== 云同步配置 =====================
+const SYNC_CONFIG_KEY = 'mindmap_sync_config';
+const SYNC_VERSION_KEY = 'mindmap_sync_version';
+const SYNC_LAST_CHECK_KEY = 'mindmap_last_cloud_check';
+
+// 只使用腾讯云函数转发
+const PRIMARY_API_URLS = [
+  'https://1408347752-dxgsap4qrj.ap-guangzhou.tencentscf.com'  // 腾讯云函数
+];
+const FALLBACK_API_URLS = [];  // 不使用Workers兜底
+
+const DEFAULT_SYNC_CONFIG = {
+  enabled: true,
+  apiUrl: PRIMARY_API_URLS[0], // 默认使用第一个优先地址（腾讯云函数免令牌）
+  webhookUrl: 'https://www.kdocs.cn/api/v3/ide/file/ctRsEvOpYZky/script/V2-1cf9aRSXUlNao8Qhjk4ATb/sync_task',
+  token: '',
+  autoSaveInterval: 5,
+  cloudCheckInterval: 5,
+  syncThreshold: 5,
+  sheetName: '自用脑图',
+  retryCount: 5,
+  retryInterval: 2
+};
+
+let syncConfig = null;
+let localVersion = 0;
+let cloudVersion = 0;
+let isSyncing = false;
+let pendingCloudVersion = null;
+let autoSaveTimer = null;
+let cloudCheckTimer = null;
+let lastContentHash = '';
+let lastSaveTime = 0;
+let currentUploadAbort = null;
+let pendingUploadVersion = 0;
+
+function getSyncConfig() {
+  if (!syncConfig) {
+    try {
+      const saved = localStorage.getItem(SYNC_CONFIG_KEY);
+      syncConfig = saved ? JSON.parse(saved) : { ...DEFAULT_SYNC_CONFIG };
+    } catch (e) {
+      syncConfig = { ...DEFAULT_SYNC_CONFIG };
+    }
+  }
+  return syncConfig;
+}
+
+function saveSyncConfig(config) {
+  syncConfig = config;
+  localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify(config));
+}
+
+function getContentHash() {
+  if (!root) return '';
+  const text = exportNodeText(root).trimEnd();
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    const char = text.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return hash.toString();
+}
+
+function getLocalVersion() {
+  try {
+    return parseInt(localStorage.getItem(SYNC_VERSION_KEY) || '0');
+  } catch (e) {
+    return 0;
+  }
+}
+
+function setLocalVersion(v) {
+  localVersion = v;
+  localStorage.setItem(SYNC_VERSION_KEY, v.toString());
+}
+
+// 以文件名为唯一标识，不再使用文件ID
+function getSyncKey() {
+  // 返回当前文件名（去掉.txt后缀）作为同步唯一键
+  return currentFileName ? currentFileName.replace(/\.txt$/, '') : '';
+}
+
+// ===================== 云同步 API =====================
+async function callCloudAPI(action, params = {}) {
+  const config = getSyncConfig();
+  if (!config.enabled) return { status: 'error', message: '云同步未启用' };
+
+  const payload = {
+    webhookUrl: config.webhookUrl,
+    message: {
+      Context: {
+        argv: {
+          表格名: config.sheetName,
+          操作: action,
+          ...params
+        }
+      }
+    }
+  };
+
+  const headers = { 'Content-Type': 'application/json' };
+  if (config.token) {
+    headers['AirScript-Token'] = config.token;
+  }
+
+  // 只使用腾讯云函数，不重试FALLBACK
+  const allUrls = [...PRIMARY_API_URLS, ...FALLBACK_API_URLS];
+  const maxRetries = config.retryCount || 5;
+  const retryInterval = config.retryInterval || 2;
+
+  for (const apiUrl of allUrls) {
+    let lastError = null;
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(payload)
         });
-    </script>
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('[云同步] 原始返回:', JSON.stringify(result).slice(0, 500));
+
+        // 云函数可能返回 {data: {result: {...}}} 或直接返回 {...}
+        const r = result.data?.result || result;
+        console.log('[云同步] 解析后:', JSON.stringify(r).slice(0, 500));
+
+        // 检查业务状态
+        if (r.status === 'success') {
+          console.log('[云同步] 业务成功:', r);
+          return r;
+        }
+
+        // 如果是业务错误（如参数错误），不重试
+        if (r.tongzhi && !r.tongzhi.includes('网络') && !r.tongzhi.includes('超时')) {
+          console.log('[云同步] 业务错误(不重试):', r.tongzhi);
+          return r;
+        }
+
+        lastError = new Error(r.tongzhi || r.message || JSON.stringify(r).slice(0, 100) || '未知错误');
+      } catch (error) {
+        lastError = error;
+        console.log(`[云同步] ${apiUrl} 第${attempt + 1}次尝试失败:`, error.message);
+      }
+
+      // 等待后重试
+      if (attempt < maxRetries - 1) {
+        await new Promise(resolve => setTimeout(resolve, retryInterval * 1000));
+      }
+    }
+
+    console.log(`[云同步] ${apiUrl} 重试${maxRetries}次后失败，尝试下一个地址`);
+  }
+
+  return { status: 'error', message: lastError?.message || '所有云函数地址均不可用' };
+}
+
+async function findFileInCloud(fileName) {
+  // 以文件名为唯一标识查找
+  const name = fileName || currentFileName || '';
+  const result = await callCloudAPI('查找', { 列名: '文件名', 关键字: name });
+  if (result.status === 'success' && result.匹配数 > 0) {
+    return result.数据[0];
+  }
+  return null;
+}
+
+async function getCloudVersion(fileName) {
+  const file = await findFileInCloud(fileName);
+  if (file) {
+    return parseInt(file.版本号 || '0');
+  }
+  return 0;
+}
+
+async function uploadToCloud() {
+  const thisVersion = ++pendingUploadVersion;
+
+  // 如果有正在进行的旧上传，标记为已取消（通过版本号比较）
+  // 旧上传会在关键检查点发现自己不是最新版本而提前退出
+
+  const config = getSyncConfig();
+  const fileName = currentFileName || '未命名.txt';
+  const content = exportNodeText(root).trimEnd();
+  const newVersion = getLocalVersion() + 1;
+
+  // 检查是否已被更新的上传取代
+  if (thisVersion !== pendingUploadVersion) {
+    return { status: 'cancelled', message: '被更新的上传取代' };
+  }
+
+  isSyncing = true;
+  updateSyncButton('🔄');
+
+  try {
+    // 检查云端是否已有更新版本
+    const cloudVer = await getCloudVersion(fileName);
+
+    // 再次检查是否被取代
+    if (thisVersion !== pendingUploadVersion) {
+      return { status: 'cancelled', message: '被更新的上传取代' };
+    }
+
+    if (cloudVer > getLocalVersion()) {
+      isSyncing = false;
+      pendingCloudVersion = cloudVer;
+      showSyncConflict(cloudVer);
+      return { status: 'conflict', message: '云端有新版本' };
+    }
+
+    // 查找或创建文件记录（以文件名为唯一标识）
+    const existingFile = await findFileInCloud(fileName);
+
+    // 第三次检查是否被取代
+    if (thisVersion !== pendingUploadVersion) {
+      isSyncing = false;
+      return { status: 'cancelled', message: '被更新的上传取代' };
+    }
+
+    if (existingFile) {
+      // 更新现有记录
+      const rowNum = existingFile._行号;
+      await callCloudAPI('批量写入', {
+        行号: rowNum,
+        数据: {
+          文件名: fileName,
+          内容: content,
+          版本号: newVersion.toString(),
+          更新时间: new Date().toISOString()
+        }
+      });
+    } else {
+      // 获取当前最大行号
+      const dimResult = await callCloudAPI('获取维度');
+      const newRow = dimResult.status === 'success' ? dimResult.最大行 + 1 : 2;
+
+      // 创建新记录
+      await callCloudAPI('批量写入', {
+        行号: newRow,
+        数据: {
+          文件名: fileName,
+          内容: content,
+          版本号: newVersion.toString(),
+          更新时间: new Date().toISOString()
+        }
+      });
+    }
+
+    // 最终检查：只有最新的上传才更新本地版本状态
+    if (thisVersion === pendingUploadVersion) {
+      setLocalVersion(newVersion);
+      lastContentHash = getContentHash();
+      updateSyncButton('✅');
+      setTimeout(() => updateSyncButton('☁️'), 2000);
+      return { status: 'success', version: newVersion };
+    } else {
+      // 被更新的上传取代，但云端已写入，需要重新同步
+      isSyncing = false;
+      return { status: 'cancelled', message: '被更新的上传取代，云端可能已写入' };
+    }
+  } catch (error) {
+    updateSyncButton('❌');
+    setTimeout(() => updateSyncButton('☁️'), 2000);
+    return { status: 'error', message: error.message };
+  } finally {
+    isSyncing = false;
+  }
+}
+
+async function downloadFromCloud() {
+  const fileName = currentFileName || '';
+  const file = await findFileInCloud(fileName);
+  
+  if (!file) {
+    return { status: 'error', message: '云端无此文件' };
+  }
+
+  const cloudVer = parseInt(file.版本号 || '0');
+  const localVer = getLocalVersion();
+
+  if (cloudVer <= localVer) {
+    return { status: 'no_update', message: '本地已是最新' };
+  }
+
+  // 检查本地是否有未保存的更改
+  const currentHash = getContentHash();
+  if (currentHash !== lastContentHash && currentHash !== '') {
+    // 本地有更改，显示冲突对话框
+    pendingCloudVersion = cloudVer;
+    showSyncConflict(cloudVer);
+    return { status: 'conflict', message: '本地有未保存更改' };
+  }
+
+  // 应用云端内容
+  const content = file.内容 || '';
+  pushHistory();
+  root = parseText(content);
+  selectedNode = null;
+  rebuildMap();
+  render();
+  
+  setLocalVersion(cloudVer);
+  lastContentHash = getContentHash();
+  
+  // 保存到本地存储
+  localStorage.setItem('mindmap_data', content);
+  if (currentFileName) {
+    saveFileData(currentFileName, content);
+  }
+  
+  toast('已从云端更新');
+  return { status: 'success', version: cloudVer };
+}
+
+function updateSyncButton(icon) {
+  const btn = document.getElementById('syncBtn');
+  if (btn) btn.textContent = icon + ' 同步';
+}
+
+// ===================== 同步设置 UI =====================
+function showSyncSettings() {
+  const config = getSyncConfig();
+  document.getElementById('syncApiUrl').value = config.apiUrl || '';
+  document.getElementById('syncWebhookUrl').value = config.webhookUrl || '';
+  document.getElementById('syncToken').value = config.token || '';
+  document.getElementById('syncAutoSaveInterval').value = config.autoSaveInterval || 5;
+  document.getElementById('syncCloudCheckInterval').value = config.cloudCheckInterval || 5;
+  document.getElementById('syncThreshold').value = config.syncThreshold || 5;
+  document.getElementById('syncRetryCount').value = config.retryCount || 5;
+  document.getElementById('syncRetryInterval').value = config.retryInterval || 2;
+  document.getElementById('syncEnabled').checked = config.enabled !== false;
+  document.getElementById('sync-modal').classList.add('show');
+}
+
+function closeSyncSettings() {
+  document.getElementById('sync-modal').classList.remove('show');
+}
+
+function saveSyncSettings() {
+  const config = {
+    enabled: document.getElementById('syncEnabled').checked,
+    apiUrl: document.getElementById('syncApiUrl').value.trim() || PRIMARY_API_URLS[0],
+    webhookUrl: document.getElementById('syncWebhookUrl').value.trim(),
+    token: document.getElementById('syncToken').value.trim(),
+    autoSaveInterval: parseInt(document.getElementById('syncAutoSaveInterval').value) || 5,
+    cloudCheckInterval: parseInt(document.getElementById('syncCloudCheckInterval').value) || 5,
+    syncThreshold: parseInt(document.getElementById('syncThreshold').value) || 5,
+    retryCount: parseInt(document.getElementById('syncRetryCount').value) || 5,
+    retryInterval: parseInt(document.getElementById('syncRetryInterval').value) || 2,
+    sheetName: '自用脑图'
+  };
+  saveSyncConfig(config);
+  closeSyncSettings();
+  restartSyncTimers();
+  toast('同步设置已保存');
+}
+
+// ===================== 冲突处理 =====================
+function showSyncConflict(cloudVer) {
+  document.getElementById('localVersion').textContent = getLocalVersion();
+  document.getElementById('cloudVersion').textContent = cloudVer;
+  document.getElementById('sync-conflict-modal').classList.add('show');
+}
+
+function closeSyncConflict() {
+  document.getElementById('sync-conflict-modal').classList.remove('show');
+  pendingCloudVersion = null;
+}
+
+async function acceptCloudVersion() {
+  const fileName = currentFileName || '';
+  const file = await findFileInCloud(fileName);
+  if (file) {
+    const content = file.内容 || '';
+    pushHistory();
+    root = parseText(content);
+    selectedNode = null;
+    rebuildMap();
+    render();
+    setLocalVersion(parseInt(file.版本号 || '0'));
+    lastContentHash = getContentHash();
+    localStorage.setItem('mindmap_data', content);
+    if (currentFileName) {
+      saveFileData(currentFileName, content);
+    }
+    toast('已更新为云端版本');
+  }
+  closeSyncConflict();
+}
+
+function saveConflictVersion() {
+  // 保存当前本地版本为冲突版本
+  if (currentFileName) {
+    const conflictName = currentFileName.replace('.txt', '') + '_冲突_' + new Date().toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(/[\/\s:]/g, '') + '.txt';
+    const content = exportNodeText(root).trimEnd();
+    saveFileData(conflictName, content);
+    toast('已保存冲突版本: ' + conflictName);
+  }
+  // 然后接受云端版本
+  acceptCloudVersion();
+}
+
+// ===================== 自动同步 =====================
+function startSyncTimers() {
+  stopSyncTimers();
+  const config = getSyncConfig();
+  if (!config.enabled) return;
+
+  // 自动保存到本地（检查内容变化 + 冷却时间）
+  autoSaveTimer = setInterval(() => {
+    if (!root) return;
+    
+    const now = Date.now();
+    const cooldownMs = (config.autoSaveInterval || 5) * 1000;
+    
+    // 低于冷却间隔，不许发起保存
+    if (now - lastSaveTime < cooldownMs) return;
+    
+    const currentHash = getContentHash();
+    if (currentHash !== lastContentHash) {
+      // 内容有变化，保存到本地
+      const text = exportNodeText(root).trimEnd();
+      localStorage.setItem('mindmap_data', text);
+      if (currentFileName) {
+        saveFileData(currentFileName, text);
+      }
+      lastSaveTime = now;
+
+      // 触发云端同步（异步，不阻塞）
+      // 只有当前文件被监督时才上传
+      if (activeFileName === currentFileName || isFileManagerOpen) {
+        // 检查同步差值：本地版本领先差值才自动上传
+        const localVer = getLocalVersion();
+        const syncThreshold = config.syncThreshold || 5;
+        
+        if (localVer >= syncThreshold) {
+          uploadToCloud().then(result => {
+            if (result.status === 'success') {
+              lastContentHash = currentHash;
+            }
+          }).catch(() => {});
+        } else {
+          // 未达差值，只更新本地hash
+          lastContentHash = currentHash;
+        }
+      } else {
+        // 不监督的文件只更新本地 hash
+        lastContentHash = currentHash;
+      }
+    }
+  }, 1000);
+
+  // 定期检查云端版本
+  cloudCheckTimer = setInterval(() => {
+    if (activeFileName === currentFileName || isFileManagerOpen) {
+      checkCloudVersion();
+    }
+  }, (config.cloudCheckInterval || 5) * 60 * 1000);
+}
+
+function stopSyncTimers() {
+  if (autoSaveTimer) {
+    clearInterval(autoSaveTimer);
+    autoSaveTimer = null;
+  }
+  if (cloudCheckTimer) {
+    clearInterval(cloudCheckTimer);
+    cloudCheckTimer = null;
+  }
+}
+
+function restartSyncTimers() {
+  startSyncTimers();
+}
+
+async function checkCloudVersion() {
+  const config = getSyncConfig();
+  if (!config.enabled) return;
+
+  try {
+    const fileName = currentFileName || '';
+    const file = await findFileInCloud(fileName);
+    const localVer = getLocalVersion();
+
+    // 云端无此文件 = 已被删除
+    if (!file || !file.文件名 || file.文件名 === '') {
+      if (localVer > 0 && root) {
+        // 本地有数据但云端已删除，提示用户
+        if (confirm('⚠️ 云端已删除此文件，是否同时删除本地？\n点击"确定"删除本地，点击"取消"保留本地并重新上传')) {
+          // 删除本地
+          root = null;
+          selectedNode = null;
+          setLocalVersion(0);
+          lastContentHash = '';
+          localStorage.removeItem('mindmap_data');
+          localStorage.removeItem('mindmap_current_file');
+          currentFileName = '';
+          render();
+          toast('已按云端删除本地文件');
+        } else {
+          // 用户选择保留本地，重新上传
+          uploadToCloud();
+        }
+      }
+      return;
+    }
+
+    const cloudVer = parseInt(file.版本号 || '0');
+
+    if (cloudVer > localVer) {
+      // 云端有新版本
+      const currentHash = getContentHash();
+      if (currentHash === lastContentHash || currentHash === '') {
+        // 本地没有未保存的更改，弹窗提醒后更新
+        if (confirm(`📥 云端有新版本 (v${cloudVer})，是否更新本地？`)) {
+          downloadFromCloud();
+        }
+      } else {
+        // 本地有更改，显示冲突对话框
+        pendingCloudVersion = cloudVer;
+        showSyncConflict(cloudVer);
+      }
+    }
+  } catch (error) {
+    console.log('检查云端版本失败:', error);
+  }
+}
+
+async function syncToCloud() {
+  updateSyncButton('🔄');
+  const result = await uploadToCloud();
+  if (result.status === 'success') {
+    toast('同步成功，版本: ' + result.version);
+  } else if (result.status !== 'conflict') {
+    toast('同步失败: ' + result.message);
+  }
+}
+
+// ===================== 初始化表头 =====================
+async function initSyncSheet() {
+  const config = getSyncConfig();
+  if (!config.enabled) return;
+
+  try {
+    // 先检查表头是否已存在
+    const headersResult = await callCloudAPI('获取表头');
+    if (headersResult.status === 'success') {
+      const existingHeaders = headersResult.表头 || [];
+      const requiredHeaders = ['文件名', '内容', '版本号', '更新时间'];
+      const hasAllHeaders = requiredHeaders.every(h => existingHeaders.includes(h));
+
+      if (hasAllHeaders) {
+        console.log('云端表头已存在且完整');
+        return;
+      }
+    }
+
+    // 需要初始化表头
+    const requiredHeaders = ['文件名', '内容', '版本号', '更新时间'];
+    const result = await callCloudAPI('初始化表头', { 表头: requiredHeaders });
+    if (result.status === 'success') {
+      console.log('已初始化云端表头');
+    } else {
+      console.log('初始化表头失败:', result.tongzhi || result.message);
+    }
+  } catch (error) {
+    console.log('初始化表头失败:', error);
+  }
+}
+
+function getNodePath(node){
+  if(!node)return null;
+  const path=[];
+  let n=node;
+  while(n.parent){
+    path.unshift(n.parent.children.indexOf(n));
+    n=n.parent;
+  }
+  return path.join('.');
+}
+
+function findNodeByPath(pathStr){
+  if(!root||!pathStr)return null;
+  const parts=pathStr.split('.').map(Number);
+  let n=root;
+  for(const idx of parts){
+    if(!n.children||!n.children[idx])return null;
+    n=n.children[idx];
+  }
+  return n;
+}
+
+function captureState(){
+  if(!root)return null;
+  return{
+    text:exportNodeText(root).trimEnd(),
+    selectedPath:getNodePath(selectedNode)
+  };
+}
+
+function pushHistory(){
+  if(undoSuspended)return;
+  const state=captureState();
+  if(!state)return;
+  undoStack.push(state);
+  if(undoStack.length>MAX_HISTORY)undoStack.shift();
+  redoStack=[];
+}
+
+function restoreState(state){
+  if(!state)return;
+  undoSuspended=true;
+  root=parseText(state.text);
+  selectedNode=null;
+  rebuildMap();
+  if(state.selectedPath){
+    const found=findNodeByPath(state.selectedPath);
+    if(found)selectedNode=found;
+  }
+  render();
+  if(selectedNode)centerOnNode(selectedNode);
+  undoSuspended=false;
+}
+
+function undo(){
+  if(undoStack.length===0){toast('没有可撤销的操作');return}
+  const current=captureState();
+  redoStack.push(current);
+  const state=undoStack.pop();
+  restoreState(state);
+  toast('撤销');
+}
+
+function redo(){
+  if(redoStack.length===0){toast('没有可重做的操作');return}
+  const current=captureState();
+  undoStack.push(current);
+  const state=redoStack.pop();
+  restoreState(state);
+  toast('重做');
+}
+
+function centerOnNode(node){
+  const vp=document.getElementById('viewport');
+  const vw=vp.clientWidth,vh=vp.clientHeight;
+  panX=vw/2-node.x*zoom-node.width*zoom/2;
+  panY=vh/2-node.y*zoom;
+  updateTransform();
+}
+
+class MindNode{
+  constructor(text){
+    this.id=MindNode._nextId++;
+    this.text=text||'';
+    this.children=[];
+    this.parent=null;
+    this.collapsed=false;
+    this.x=0;this.y=0;this.width=0;this.height=0;this.subtreeH=0;
+    this.displayLines=[];
+    this.titleLineCount=0;
+    this.customWidth=0;
+  }
+  addChild(c){c.parent=this;this.children.push(c)}
+  removeChild(c){const i=this.children.indexOf(c);if(i>=0){this.children.splice(i,1);c.parent=null}}
+  insertAfter(newNode,refNode){const i=this.children.indexOf(refNode);this.children.splice(i+1,0,newNode);newNode.parent=this}
+  isDescendantOf(n){let p=this;while(p){if(p===n)return true;p=p.parent}return false}
+  countDescendants(){let c=0;for(const ch of this.children){c+=1+ch.countDescendants()}return c}
+  firstLine(){const i=this.text.indexOf('\n');return i>=0?this.text.substring(0,i):this.text}
+}
+MindNode._nextId=1;
+
+function getLevel(node){let l=0,p=node.parent;while(p){l++;p=p.parent}return l}
+function getAncestorBranch(node){
+  if(getLevel(node)<1)return null;
+  if(getLevel(node)===1)return node;
+  let p=node.parent;
+  while(p&&getLevel(p)>1)p=p.parent;
+  return p;
+}
+function getNodeBranchColor(node){
+  if(node._userColor)return node._userColor;
+  if(node._branchColor)return node._branchColor;
+  if(node.parent)return getNodeBranchColor(node.parent);
+  return null;
+}
+function pickBranchColor(avoidColor){
+  let pool;
+  if(usedBranchColors.size<MAX_USED_COLORS){
+    pool=BRANCH_COLORS.filter(c=>!usedBranchColors.has(c)&&c!==avoidColor);
+  }else{
+    pool=BRANCH_COLORS.filter(c=>c!==avoidColor);
+  }
+  if(pool.length===0)pool=BRANCH_COLORS.slice();
+  const c=pool[Math.floor(Math.random()*pool.length)];
+  usedBranchColors.add(c);
+  return c;
+}
+function setUserColor(node,color){
+  node._userColor=color;
+  for(const child of node.children)setUserColor(child,color);
+}
+function getColor(node){
+  const level=getLevel(node);
+  if(level>=1){
+    const bc=getNodeBranchColor(node);
+    return bc||BRANCH_COLORS[0];
+  }
+  return LEVEL_COLORS[0];
+}
+
+function wrapText(text,font,maxWidth){
+  measureCtx.font=font;
+  const lines=[];
+  const paragraphs=text.split('\n');
+  for(const para of paragraphs){
+    if(!para){lines.push('');continue}
+    let line='';
+    for(let i=0;i<para.length;i++){
+      const test=line+para[i];
+      if(measureCtx.measureText(test).width>maxWidth&&line){
+        lines.push(line);line=para[i];
+      }else{line=test}
+    }
+    if(line)lines.push(line);
+  }
+  return lines;
+}
+
+function parseText(text){
+  MindNode._nextId=1;
+  // 兼容 \r\n, \r, \n 三种换行符
+  const lines=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+  const vRoot=new MindNode('__v__');
+  const stack=[{node:vRoot,level:-1}];
+  for(const line of lines){
+    if(!line.trim())continue;
+    let level=0;
+    while(level<line.length&&line[level]==='\t')level++;
+    const content=line.substring(level);
+    const ti=content.indexOf('\t');
+    let nodeText,collapsed=false,customWidth=0,parsedColor=null;
+    function parseTitle(raw){
+      let s=raw.trim();
+      const wm=s.match(/ ◆(\d+)$/);
+      if(wm){customWidth=parseInt(wm[1]);s=s.slice(0,-wm[0].length)}
+      const cm=s.match(/ ★([^ ]+)$/);
+      if(cm){parsedColor=cm[1];s=s.slice(0,-cm[0].length)}
+      if(s.endsWith('◈')){collapsed=true;s=s.slice(0,-1).trimEnd()}
+      s=s.replace(/\\n/g,'\n');
+      return s;
+    }
+    if(ti>=0){
+      const title=parseTitle(content.substring(0,ti));
+      const desc=content.substring(ti+1).replace(/\\n/g,'\n').trim();
+      nodeText=desc?title+'\n'+desc:title;
+    }else{
+      nodeText=parseTitle(content);
+    }
+    if(!nodeText)continue;
+    const node=new MindNode(nodeText);
+    node.collapsed=collapsed;
+    node.customWidth=customWidth;
+    while(stack.length>1&&stack[stack.length-1].level>=level)stack.pop();
+    stack[stack.length-1].node.addChild(node);
+    if(parsedColor){
+      if(getLevel(node)===1){node._branchColor=parsedColor}
+      else{node._userColor=parsedColor}
+    }
+    stack.push({node,level});
+  }
+  if(vRoot.children.length===1){const r=vRoot.children[0];r.parent=null;return r}
+  if(vRoot.children.length>1){vRoot.text=currentFileName?currentFileName.replace(/\.txt$/,''):'根节点';return vRoot}
+  return new MindNode('空思维导图');
+}
+
+function exportNodeText(node,indent=0){
+  const nlIdx=node.text.indexOf('\n');
+  const collapseMark=node.collapsed?' ◈':'';
+  const widthMark=node.customWidth>0?' ◆'+node.customWidth:'';
+  const level=getLevel(node);
+  const colorMark=(level>=1&&(node._branchColor||node._userColor))?' ★'+(node._userColor||node._branchColor):'';
+  let line;
+  if(nlIdx>=0){
+    const title=node.text.substring(0,nlIdx)+collapseMark+colorMark+widthMark;
+    const desc=node.text.substring(nlIdx+1).replace(/\n/g,'\\n');
+    line='\t'.repeat(indent)+title+'\t'+desc;
+  }else{
+    line='\t'.repeat(indent)+node.text+collapseMark+colorMark+widthMark;
+  }
+  let result=line+'\n';
+  for(const c of node.children)result+=exportNodeText(c,indent+1);
+  return result;
+}
+
+function measureNode(node){
+  const effectiveMaxW=node.customWidth>0?node.customWidth:MAX_NODE_WIDTH;
+  const innerW=effectiveMaxW-NODE_PAD_H*2;
+  const rawLines=node.text.split('\n');
+  node.displayLines=[];
+  node.titleLineCount=0;
+  for(let p=0;p<rawLines.length;p++){
+    const font=p===0?FONT_STR:DESC_FONT_STR;
+    const wrapped=wrapText(rawLines[p],font,innerW);
+    if(p===0)node.titleLineCount=wrapped.length;
+    for(const wl of wrapped)node.displayLines.push({text:wl,isTitle:p===0});
+  }
+  if(node.displayLines.length===0){
+    node.displayLines=[{text:'(空)',isTitle:true}];
+    node.titleLineCount=1;
+  }
+  let maxLineW=0;
+  for(const dl of node.displayLines){
+    measureCtx.font=dl.isTitle?FONT_STR:DESC_FONT_STR;
+    maxLineW=Math.max(maxLineW,measureCtx.measureText(dl.text).width);
+  }
+  node.width=Math.max(maxLineW+NODE_PAD_H*2,60);
+  if(node.customWidth>0)node.width=Math.max(node.customWidth,60);
+  else node.width=Math.min(node.width,MAX_NODE_WIDTH);
+  let h=NODE_PAD_V;
+  for(const dl of node.displayLines){
+    h+=dl.isTitle?LINE_HEIGHT:DESC_LINE_HEIGHT;
+  }
+  h+=NODE_PAD_V;
+  node.height=h;
+}
+
+function computeSubtreeH(node){
+  measureNode(node);
+  if(node.collapsed||node.children.length===0){node.subtreeH=node.height;return node.subtreeH}
+  let total=0;
+  for(const c of node.children)total+=computeSubtreeH(c);
+  total+=V_GAP*(node.children.length-1);
+  node.subtreeH=Math.max(node.height,total);
+  return node.subtreeH;
+}
+
+function layoutNode(node,x,yStart,yEnd){
+  node.x=x;node.y=(yStart+yEnd)/2;
+  if(node.collapsed||node.children.length===0)return;
+  const childX=x+node.width+H_GAP;
+  let childrenH=0;
+  for(const c of node.children)childrenH+=c.subtreeH;
+  childrenH+=V_GAP*(node.children.length-1);
+  let curY=node.y-childrenH/2;
+  if(curY<yStart)curY=yStart;
+  for(const c of node.children){
+    layoutNode(c,childX,curY,curY+c.subtreeH);
+    curY+=c.subtreeH+V_GAP;
+  }
+}
+
+function rebuildMap(){
+  nodeMap={};
+  if(!root)return;
+  computeSubtreeH(root);
+  layoutNode(root,60,0,root.subtreeH);
+  indexNodes(root);
+}
+function indexNodes(node){nodeMap[node.id]=node;if(!node.collapsed)for(const c of node.children)indexNodes(c)}
+
+function render(){
+  const world=document.getElementById('world');
+  world.innerHTML='';
+  if(!root)return;
+  renderConns(root,world);
+  renderNodes(root,world);
+  updateTransform();
+  scheduleAutoSave();
+}
+
+function renderConns(node,container){
+  if(node.collapsed)return;
+  for(const child of node.children){
+    const path=document.createElementNS(SVG_NS,'path');
+    const x1=node.x+node.width,y1=node.y;
+    const x2=child.x,y2=child.y;
+    const cx=(x1+x2)/2;
+    path.setAttribute('d',`M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}`);
+    path.setAttribute('stroke',getColor(child));
+    path.setAttribute('stroke-width','2');
+    path.setAttribute('fill','none');
+    path.setAttribute('opacity','0.45');
+    container.appendChild(path);
+    renderConns(child,container);
+  }
+}
+
+function renderNodeContent(node,g,offsetX,offsetY,opacity){
+  let curY=node.y-node.height/2+NODE_PAD_V+offsetY;
+  for(const dl of node.displayLines){
+    const t=document.createElementNS(SVG_NS,'text');
+    t.setAttribute('x',node.x+NODE_PAD_H+2+offsetX);
+    t.setAttribute('y',curY+(dl.isTitle?LINE_HEIGHT:DESC_LINE_HEIGHT)/2);
+    if(dl.isTitle){
+      t.setAttribute('font-size',FONT_SIZE);t.setAttribute('font-weight','bold');
+      t.setAttribute('fill','#333');
+    }else{
+      t.setAttribute('font-size',DESC_FONT_SIZE);
+      t.setAttribute('fill','#666');
+    }
+    t.setAttribute('dominant-baseline','middle');
+    if(opacity!==undefined)t.setAttribute('opacity',opacity);
+    t.textContent=dl.text;
+    g.appendChild(t);
+    curY+=dl.isTitle?LINE_HEIGHT:DESC_LINE_HEIGHT;
+  }
+}
+
+function renderNodes(node,container){
+  const g=document.createElementNS(SVG_NS,'g');
+  g.setAttribute('class','mind-node'+(selectedNode===node?' selected':''));
+  g.setAttribute('data-id',node.id);
+
+  const rect=document.createElementNS(SVG_NS,'rect');
+  rect.setAttribute('class','node-bg');
+  rect.setAttribute('x',node.x);rect.setAttribute('y',node.y-node.height/2);
+  rect.setAttribute('width',node.width);rect.setAttribute('height',node.height);
+  rect.setAttribute('rx','4');rect.setAttribute('fill','#e8e8e8');
+  g.appendChild(rect);
+
+  const bar=document.createElementNS(SVG_NS,'rect');
+  bar.setAttribute('x',node.x);bar.setAttribute('y',node.y-node.height*0.4);
+  bar.setAttribute('width','4');bar.setAttribute('height',node.height*0.8);
+  bar.setAttribute('rx','2');bar.setAttribute('fill',getColor(node));
+  g.appendChild(bar);
+
+  renderNodeContent(node,g,0,0);
+
+  if(node.children.length>0){
+    const btn=document.createElementNS(SVG_NS,'g');
+    btn.setAttribute('class','collapse-btn');btn.setAttribute('data-collapse',node.id);
+    const bx=node.x+node.width+12,by=node.y;
+    const bg=document.createElementNS(SVG_NS,'circle');
+    bg.setAttribute('cx',bx);bg.setAttribute('cy',by);bg.setAttribute('r','9');
+    bg.setAttribute('fill','#e8e8e8');
+    btn.appendChild(bg);
+    const sign=document.createElementNS(SVG_NS,'text');
+    sign.setAttribute('x',bx);sign.setAttribute('y',by+1);sign.setAttribute('text-anchor','middle');
+    sign.setAttribute('dominant-baseline','middle');sign.setAttribute('font-size','13');
+    sign.setAttribute('fill',getColor(node));sign.setAttribute('font-weight','bold');
+    sign.textContent=node.collapsed?'+':'−';
+    btn.appendChild(sign);
+    if(node.collapsed){
+      const count=document.createElementNS(SVG_NS,'text');
+      count.setAttribute('x',bx);count.setAttribute('y',by+15);
+      count.setAttribute('text-anchor','middle');count.setAttribute('font-size','9');
+      count.setAttribute('fill','#999');count.textContent=node.countDescendants();
+      btn.appendChild(count);
+    }
+    g.appendChild(btn);
+  }
+
+  if(selectedNode===node){
+    const handle=document.createElementNS(SVG_NS,'rect');
+    handle.setAttribute('class','resize-handle');
+    handle.setAttribute('x',node.x+node.width-6);
+    handle.setAttribute('y',node.y-node.height/2);
+    handle.setAttribute('width','8');handle.setAttribute('height',node.height);
+    handle.setAttribute('fill','transparent');handle.setAttribute('cursor','ew-resize');
+    handle.setAttribute('data-resize',node.id);
+    g.appendChild(handle);
+  }
+
+  container.appendChild(g);
+  if(!node.collapsed)for(const c of node.children)renderNodes(c,container);
+}
+
+function updateTransform(){
+  const world=document.getElementById('world');
+  world.setAttribute('transform',`translate(${panX},${panY}) scale(${zoom})`);
+  document.getElementById('zoomInfo').textContent=Math.round(zoom*100)+'%';
+  try{localStorage.setItem('mindmap_view',JSON.stringify({zoom,panX,panY}))}catch(e){}
+}
+
+function selectNode(node){
+  selectedNode=node;
+  document.querySelectorAll('.mind-node.selected').forEach(el=>el.classList.remove('selected'));
+  if(node){
+    const el=document.querySelector(`.mind-node[data-id="${node.id}"]`);
+    if(el)el.classList.add('selected');
+  }
+}
+
+function fitScreen(){
+  if(!root)return;
+  const vp=document.getElementById('viewport');
+  const vw=vp.clientWidth,vh=vp.clientHeight;
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  function bounds(n){
+    minX=Math.min(minX,n.x);minY=Math.min(minY,n.y-n.height/2);
+    maxX=Math.max(maxX,n.x+n.width);maxY=Math.max(maxY,n.y+n.height/2);
+    if(!n.collapsed)for(const c of n.children)bounds(c);
+  }
+  bounds(root);
+  const tw=maxX-minX+100,th=maxY-minY+100;
+  zoom=Math.min(vw/tw,vh/th,2);zoom=Math.max(zoom,0.1);
+  panX=vw/2-(minX+tw/2-50)*zoom;
+  panY=vh/2-(minY+th/2-50)*zoom;
+  render();
+}
+
+function zoomIn(){zoom=Math.min(zoom*1.2,5);render()}
+function zoomOut(){zoom=Math.max(zoom/1.2,0.05);render()}
+
+let isFullscreen=false;
+function toggleFullscreen(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen().then(()=>{isFullscreen=true}).catch(()=>{});
+  } else {
+    document.exitFullscreen().then(()=>{isFullscreen=false}).catch(()=>{});
+  }
+}
+document.addEventListener('fullscreenchange',()=>{
+  isFullscreen=!!document.fullscreenElement;
+});
+
+function addChild(){
+  if(!selectedNode){toast('请先选择节点');return}
+  const node=new MindNode('新节点');
+  pushHistory();
+  selectedNode.addChild(node);
+  if(selectedNode.collapsed)selectedNode.collapsed=false;
+  const lvl=getLevel(node);
+  if(lvl>=1){
+    if(lvl===1){
+      node._branchColor=pickBranchColor(null);
+    } else {
+      node._branchColor=getNodeBranchColor(selectedNode);
+    }
+    usedBranchColors.add(node._branchColor);
+  }
+  rebuildMap();render();selectNode(node);startInlineEdit(node,true);
+}
+
+function addSibling(){
+  if(!selectedNode||!selectedNode.parent){toast('根节点无法添加同级');return}
+  const node=new MindNode('新节点');
+  pushHistory();
+  selectedNode.parent.insertAfter(node,selectedNode);
+  const lvl=getLevel(node);
+  if(lvl>=1){
+    if(lvl===1){
+      node._branchColor=pickBranchColor(null);
+    } else {
+      node._branchColor=getNodeBranchColor(selectedNode);
+    }
+    usedBranchColors.add(node._branchColor);
+  }
+  rebuildMap();render();selectNode(node);startInlineEdit(node,true);
+}
+
+function deleteNode(){
+  if(!selectedNode){toast('请先选择节点');return}
+  if(!selectedNode.parent){toast('不能删除根节点');return}
+  pushHistory();
+  const p=selectedNode.parent;
+  p.removeChild(selectedNode);selectedNode=p;
+  rebuildMap();render();toast('已删除');
+}
+
+function editNode(){
+  if(!selectedNode){toast('请先选择节点');return}
+  startInlineEdit(selectedNode);
+}
+
+let inlineEditNode=null;
+let skipInlineHistory=false;
+function startInlineEdit(node,skipHistory){
+    finishInlineEdit();
+    inlineEditNode=node;
+    skipInlineHistory=!!skipHistory;
+  const vp=document.getElementById('viewport');
+  const vpRect=vp.getBoundingClientRect();
+  const svgEl=document.getElementById('canvas');
+  const svgRect=svgEl.getBoundingClientRect();
+  const screenX=node.x*zoom+panX+svgRect.left-vpRect.left;
+  const screenY=(node.y-node.height/2)*zoom+panY+svgRect.top-vpRect.top;
+  const screenW=node.width*zoom;
+  const screenH=node.height*zoom;
+  const container=document.getElementById('inline-editor');
+  const ta=container.querySelector('textarea');
+  container.style.display='block';
+  container.style.left=screenX+'px';
+  container.style.top=screenY+'px';
+  ta.style.width=screenW+'px';
+  ta.style.minHeight=screenH+'px';
+  ta.style.fontSize=(FONT_SIZE*zoom)+'px';
+  ta.style.lineHeight='1.5';
+  ta.value=node.text;
+  ta.focus();
+  ta.select();
+  autoResizeInline(ta);
+}
+
+function autoResizeInline(ta){
+  ta.style.height='auto';
+  ta.style.height=Math.max(ta.scrollHeight,parseFloat(ta.style.minHeight))+'px';
+}
+
+function finishInlineEdit(){
+  const container=document.getElementById('inline-editor');
+  const ta=container.querySelector('textarea');
+  if(container.style.display==='block'&&inlineEditNode){
+    if(!skipInlineHistory)pushHistory();
+    skipInlineHistory=false;
+    inlineEditNode.text=ta.value||'未命名';
+    container.style.display='none';
+    inlineEditNode=null;
+    rebuildMap();render();
+  }
+}
+
+document.getElementById('inline-editor').querySelector('textarea').addEventListener('input',function(){
+  autoResizeInline(this);
+});
+document.getElementById('inline-editor').querySelector('textarea').addEventListener('blur',function(){
+  finishInlineEdit();
+});
+document.getElementById('inline-editor').querySelector('textarea').addEventListener('keydown',function(e){
+  if(e.key==='Escape'){e.preventDefault();finishInlineEdit()}
+  if(e.key==='Tab'){
+    e.preventDefault();
+    finishInlineEdit();
+    addChild();
+  }
+  e.stopPropagation();
+});
+
+function closeEdit(){document.getElementById('edit-modal').classList.remove('show');editingNodeId=null}
+function saveEdit(){
+  const node=nodeMap[editingNodeId];
+  if(!node){closeEdit();return}
+  pushHistory();
+  node.text=document.getElementById('editText').value||'未命名';
+  closeEdit();rebuildMap();render();
+}
+
+function editNodeModal(){
+  if(!selectedNode){toast('请先选择节点');return}
+  editingNodeId=selectedNode.id;
+  document.getElementById('editText').value=selectedNode.text;
+  document.getElementById('edit-modal').classList.add('show');
+  document.getElementById('editText').focus();
+}
+
+function toggleCollapse(){
+  if(!selectedNode||selectedNode.children.length===0)return;
+  pushHistory();
+  const oldX=selectedNode.x,oldY=selectedNode.y;
+  selectedNode.collapsed=!selectedNode.collapsed;
+  rebuildMap();
+  panX+=(oldX-selectedNode.x)*zoom;
+  panY+=(oldY-selectedNode.y)*zoom;
+  render();
+}
+
+function collapseAll(){if(!root)return;pushHistory();function c(n){if(n.children.length>0)n.collapsed=true;for(const ch of n.children)c(ch)}c(root);root.collapsed=false;rebuildMap();render();centerOnNode(selectedNode||root)}
+function expandAll(){if(!root)return;pushHistory();function c(n){n.collapsed=false;for(const ch of n.children)c(ch)}c(root);rebuildMap();render();centerOnNode(selectedNode||root)}
+
+function cloneSubtree(node){
+  const n=new MindNode(node.text);
+  n.collapsed=node.collapsed;
+  for(const c of node.children)n.addChild(cloneSubtree(c));
+  return n;
+}
+
+function cutNode(){
+  if(!selectedNode){toast('请先选择节点');return}
+  if(!selectedNode.parent){toast('不能剪切根节点');return}
+  pushHistory();
+  clipboard=cloneSubtree(selectedNode);
+  clipboardMode='cut';
+  const p=selectedNode.parent;
+  p.removeChild(selectedNode);selectedNode=p;
+  rebuildMap();render();updateClipInfo();
+  toast('已剪切：'+clipboard.firstLine()+' (+'+clipboard.countDescendants()+')');
+}
+
+function copyNode(){
+  if(!selectedNode){toast('请先选择节点');return}
+  clipboard=cloneSubtree(selectedNode);
+  clipboardMode='copy';updateClipInfo();
+  toast('已复制：'+clipboard.firstLine()+' (+'+clipboard.countDescendants()+')');
+}
+
+function exportNodeTextClean(node,indent=0){
+  const nlIdx=node.text.indexOf('\n');
+  let line;
+  if(nlIdx>=0){
+    const title=node.text.substring(0,nlIdx);
+    const desc=node.text.substring(nlIdx+1).replace(/\n/g,'\\n');
+    line='\t'.repeat(indent)+title+'\t'+desc;
+  }else{
+    line='\t'.repeat(indent)+node.text;
+  }
+  let result=line+'\n';
+  for(const c of node.children)result+=exportNodeTextClean(c,indent+1);
+  return result;
+}
+
+function copyAsStructuredText(){
+  if(!selectedNode){toast('请先选择节点');return}
+  const text=exportNodeTextClean(selectedNode,0).trimEnd();
+  navigator.clipboard.writeText(text).then(()=>{
+    toast('已复制结构文本：'+selectedNode.firstLine());
+  }).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=text;document.body.appendChild(ta);
+    ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('已复制结构文本：'+selectedNode.firstLine());
+  });
+  hideContextMenu();
+}
+
+function pasteNode(){
+  if(!clipboard){toast('剪贴板为空');return}
+  if(!selectedNode){toast('请先选择目标节点');return}
+  pushHistory();
+  const pasted=cloneSubtree(clipboard);
+  selectedNode.addChild(pasted);
+  if(selectedNode.collapsed)selectedNode.collapsed=false;
+  rebuildMap();render();selectNode(pasted);
+  toast('已粘贴：'+pasted.firstLine());
+}
+
+function updateClipInfo(){
+  const el=document.getElementById('clipInfo');
+  if(!clipboard){el.textContent='';return}
+  const mode=clipboardMode==='cut'?'剪切':'复制';
+  el.textContent=mode+': '+clipboard.firstLine()+' (+'+clipboard.countDescendants()+')';
+}
+
+function showImport(){document.getElementById('import-modal').classList.add('show');document.getElementById('importText').focus()}
+function closeImport(){document.getElementById('import-modal').classList.remove('show')}
+
+function getDefaultFileName(){
+  const now=new Date();
+  const y=now.getFullYear();
+  const m=String(now.getMonth()+1).padStart(2,'0');
+  const d=String(now.getDate()).padStart(2,'0');
+  const h=String(now.getHours()).padStart(2,'0');
+  const min=String(now.getMinutes()).padStart(2,'0');
+  return `新脑图${y}${m}${d}_${h}${min}.txt`;
+}
+
+function createNewMap(){
+  showImport();
+}
+
+function doImport(){
+  const text=document.getElementById('importText').value;
+  pushHistory();
+  if(text.trim()){
+    root=parseText(text);selectedNode=null;
+  }else{
+    // 留空则创建默认结构
+    root=parseText(SAMPLE_TEXT);selectedNode=null;
+    (function collapseBelow(n,d){
+      if(d>=3&&n.children.length>0)n.collapsed=true;
+      for(const c of n.children)collapseBelow(c,d+1);
+    })(root,0);
+  }
+  // 新建时自动生成文件名
+  currentFileName=getDefaultFileName();
+  const content=exportNodeText(root).trimEnd();
+  saveFileData(currentFileName,content);
+  localStorage.setItem('mindmap_data',content);
+  localStorage.setItem('mindmap_current_file',currentFileName);
+  // 重置同步状态
+  setLocalVersion(0);
+  lastContentHash=getContentHash();
+  activeFileName=currentFileName;
+  closeImport();rebuildMap();render();fitScreen();
+  toast('已创建：'+currentFileName);
+}
+
+function loadFile(){document.getElementById('fileInput').click()}
+function handleFile(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    pushHistory();
+    root=parseText(ev.target.result);selectedNode=null;
+    // 自动以TXT文件名为文件名
+    currentFileName=file.name;
+    saveFileData(file.name,ev.target.result);
+    localStorage.setItem('mindmap_data',ev.target.result);
+    localStorage.setItem('mindmap_current_file',file.name);
+    // 重置同步状态（新文件从版本0开始）
+    setLocalVersion(0);
+    lastContentHash=getContentHash();
+    activeFileName=currentFileName;
+    rebuildMap();render();fitScreen();toast('已加载：'+file.name);
+  };
+  reader.readAsText(file,'utf-8');e.target.value='';
+}
+
+function exportText(){
+  if(!root)return;
+  const text=exportNodeText(root);
+  const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='思维导图.txt';a.click();URL.revokeObjectURL(a.href);toast('已导出');
+}
+
+function saveToLocal(){
+  if(!root)return;
+  try{
+    const text=exportNodeText(root).trimEnd();
+    localStorage.setItem('mindmap_data',text);
+    if(currentFileName){
+      saveFileData(currentFileName,text);
+    }
+    toast('已保存');
+  }catch(e){toast('保存失败')}
+}
+
+let currentFileName='';
+function getFileIndex(){
+  try{return JSON.parse(localStorage.getItem('mindmap_file_index')||'[]')}catch(e){return[]}
+}
+function setFileIndex(idx){try{localStorage.setItem('mindmap_file_index',JSON.stringify(idx))}catch(e){}}
+function saveFileData(name,data){
+  const idx=getFileIndex();
+  const existing=idx.find(f=>f.name===name);
+  if(existing){existing.time=Date.now()}else{idx.push({name,time:Date.now()})}
+  setFileIndex(idx);
+  try{localStorage.setItem('mindmap_file_'+name,JSON.stringify({data,view:{zoom,panX,panY}}))}catch(e){toast('存储空间不足')}
+}
+function loadFileData(name){
+  try{
+    const raw=localStorage.getItem('mindmap_file_'+name);
+    if(!raw)return null;
+    return JSON.parse(raw);
+  }catch(e){return null}
+}
+function deleteFileData(name){
+  const idx=getFileIndex().filter(f=>f.name!==name);
+  setFileIndex(idx);
+  localStorage.removeItem('mindmap_file_'+name);
+}
+function renderFileList(){
+  const list=document.getElementById('fileList');
+  const idx=getFileIndex().sort((a,b)=>b.time-a.time);
+  if(idx.length===0){list.innerHTML='<div style="text-align:center;color:#999;padding:30px 0">暂无保存的文件</div>';return}
+  list.innerHTML=idx.map(f=>{
+    const d=new Date(f.time);
+    const ts=d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    const active=f.name===currentFileName?' active':'';
+    const enc=encodeURIComponent(f.name);
+    return `<div class="file-item${active}" data-name="${enc}">
+      <span class="file-name">📄 ${f.name}</span>
+      <span class="file-time">${ts}</span>
+      <span class="file-del" data-del="${enc}">✕</span>
+    </div>`;
+  }).join('');
+}
+document.getElementById('fileList').addEventListener('click',function(e){
+  const del=e.target.closest('[data-del]');
+  if(del){e.stopPropagation();deleteNamedFile(decodeURIComponent(del.getAttribute('data-del')));return}
+  const item=e.target.closest('[data-name]');
+  if(item)openNamedFile(decodeURIComponent(item.getAttribute('data-name')));
+});
+function openFileManagerFrame(){
+  const frame = document.getElementById('fileManagerFrame');
+  const fallback = document.getElementById('fileManagerFallback');
+  const modal = document.getElementById('file-modal');
+  
+  modal.classList.add('show');
+  isFileManagerOpen = true;
+  
+  // 尝试加载独立IFRAME页面
+  const frameUrl = '思维导图文件管理.html';
+  frame.style.display = 'block';
+  fallback.style.display = 'none';
+  frame.src = frameUrl;
+  
+  // 如果IFRAME加载失败，3秒后回退到内嵌模式
+  frame.onerror = function() {
+    frame.style.display = 'none';
+    fallback.style.display = 'block';
+    document.getElementById('fileNameInput').value=currentFileName||'';
+    renderFileList();
+  };
+  
+  // 3秒超时回退
+  setTimeout(() => {
+    if (!frame.contentWindow || !frame.contentWindow.document || frame.contentWindow.document.body.innerHTML === '') {
+      frame.style.display = 'none';
+      fallback.style.display = 'block';
+      document.getElementById('fileNameInput').value=currentFileName||'';
+      renderFileList();
+    }
+  }, 3000);
+  
+  // 文件管理打开时，监督所有文件的同步
+  startSyncTimers();
+}
+
+function showFileManager(){
+  document.getElementById('file-modal').classList.add('show');
+  document.getElementById('fileNameInput').value=currentFileName||'';
+  renderFileList();
+  isFileManagerOpen = true;
+  startSyncTimers();
+}
+
+function closeFileManager(){
+  const frame = document.getElementById('fileManagerFrame');
+  frame.src = '';
+  frame.style.display = 'none';
+  document.getElementById('fileManagerFallback').style.display = 'block';
+  document.getElementById('file-modal').classList.remove('show');
+  isFileManagerOpen = false;
+  // 关闭后只监督当前编辑的文件
+  startSyncTimers();
+}
+function saveNamedFile(){
+  if(!root)return;
+  let name=document.getElementById('fileNameInput').value.trim();
+  if(!name){toast('请输入文件名');return}
+  if(!name.endsWith('.txt'))name+='.txt';
+  const text=exportNodeText(root).trimEnd();
+  saveFileData(name,text);
+  currentFileName=name;
+  localStorage.setItem('mindmap_data',text);
+  localStorage.setItem('mindmap_current_file',name);
+  renderFileList();
+  toast('已保存：'+name);
+}
+
+async function renameCurrentFile(){
+  if(!currentFileName){toast('当前没有打开的文件');return}
+  const oldName=currentFileName;
+  let newName=document.getElementById('fileNameInput').value.trim();
+  if(!newName){toast('请输入新文件名');return}
+  if(!newName.endsWith('.txt'))newName+='.txt';
+  if(newName===oldName){toast('文件名未变化');return}
+
+  // 先尝试云端重命名
+  const config=getSyncConfig();
+  if(config.enabled){
+    updateSyncButton('🔄');
+    const cloudFile=await findFileInCloud(oldName);
+    if(cloudFile&&cloudFile._行号){
+      try{
+        // 检查新文件名是否已被占用
+        const existing=await findFileInCloud(newName);
+        if(existing&&existing.文件名===newName){
+          toast('云端已存在该文件名');
+          updateSyncButton('☁️');
+          return;
+        }
+        // 云端重命名：更新文件名
+        await callCloudAPI('批量写入',{
+          行号:cloudFile._行号,
+          数据:{
+            文件名:newName,
+            更新时间:new Date().toISOString()
+          }
+        });
+        toast('云端重命名成功');
+      }catch(e){
+        toast('云端重命名失败：'+e.message);
+        updateSyncButton('❌');
+        setTimeout(()=>updateSyncButton('☁️'),2000);
+        return;
+      }
+    }
+  }
+
+  // 本地重命名
+  const fd=loadFileData(oldName);
+  if(fd){
+    deleteFileData(oldName);
+    saveFileData(newName,fd.data);
+    if(fd.view){
+      try{localStorage.setItem('mindmap_file_'+newName,JSON.stringify(fd))}catch(e){}
+    }
+  }
+  currentFileName=newName;
+  localStorage.setItem('mindmap_current_file',newName);
+  activeFileName=newName;
+  renderFileList();
+  updateSyncButton('☁️');
+  toast('已重命名为：'+newName);
+}
+function openNamedFile(name){
+  const fd=loadFileData(name);
+  if(!fd){toast('文件不存在');return}
+  pushHistory();
+  root=parseText(fd.data);selectedNode=null;
+  if(fd.view){zoom=fd.view.zoom||1;panX=fd.view.panX||0;panY=fd.view.panY||0}
+  currentFileName=name;
+  localStorage.setItem('mindmap_data',fd.data);
+  localStorage.setItem('mindmap_current_file',name);
+  // 切换文件时更新同步监督的文件名
+  activeFileName = currentFileName;
+  lastContentHash = getContentHash();
+  rebuildMap();render();updateTransform();
+  renderFileList();
+  toast('已打开：'+name);
+}
+async function deleteNamedFile(name){
+  if(!confirm('确定删除 "'+name+'" ？'))return;
+  
+  // 先尝试删除云端对应记录
+  const file = await findFileInCloud(name);
+  if (file && file._行号) {
+    try {
+      await callCloudAPI('批量写入', {
+        行号: file._行号,
+        数据: { 文件名: '', 内容: '', 版本号: '0', 更新时间: '' }
+      });
+      toast('已同步删除云端记录');
+    } catch (e) {
+      console.log('云端删除失败:', e);
+    }
+  }
+  
+  deleteFileData(name);
+  if(currentFileName===name){currentFileName='';localStorage.removeItem('mindmap_current_file')}
+  renderFileList();
+  toast('已删除：'+name);
+}
+
+let fileAutoSaveTimer=null;
+function scheduleAutoSave(){
+  clearTimeout(fileAutoSaveTimer);
+  fileAutoSaveTimer=setTimeout(()=>{
+    if(!root)return;
+    try{
+      const text=exportNodeText(root).trimEnd();
+      localStorage.setItem('mindmap_data',text);
+      if(currentFileName)saveFileData(currentFileName,text);
+    }catch(e){}
+  },1000);
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toast._timer);toast._timer=setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+function svgPoint(e){
+  const svg=document.getElementById('canvas');
+  const rect=svg.getBoundingClientRect();
+  return{x:(e.clientX-rect.left-panX)/zoom,y:(e.clientY-rect.top-panY)/zoom};
+}
+
+function findNodeAt(px,py){
+  for(const id in nodeMap){
+    const n=nodeMap[id];
+    if(px>=n.x&&px<=n.x+n.width&&py>=n.y-n.height/2&&py<=n.y+n.height/2)return n;
+  }
+  return null;
+}
+
+function renderDragGhost(node,container){
+  function drawOne(n){
+    const g=document.createElementNS(SVG_NS,'g');
+    g.setAttribute('class','drag-ghost');
+    const rect=document.createElementNS(SVG_NS,'rect');
+    rect.setAttribute('x',n.x);rect.setAttribute('y',n.y-n.height/2);
+    rect.setAttribute('width',n.width);rect.setAttribute('height',n.height);
+    rect.setAttribute('rx','6');rect.setAttribute('fill','#fff');
+    rect.setAttribute('stroke',getColor(n));rect.setAttribute('stroke-width','2');
+    rect.setAttribute('opacity','0.5');
+    g.appendChild(rect);
+    const bar=document.createElementNS(SVG_NS,'rect');
+    bar.setAttribute('x',n.x);bar.setAttribute('y',n.y-n.height/2);
+    bar.setAttribute('width','4');bar.setAttribute('height',n.height);
+    bar.setAttribute('rx','2');bar.setAttribute('fill',getColor(n));bar.setAttribute('opacity','0.5');
+    g.appendChild(bar);
+    renderNodeContent(n,g,0,0,0.5);
+    container.appendChild(g);
+    if(!n.collapsed)for(const c of n.children)drawOne(c);
+  }
+  drawOne(node);
+}
+
+function hideContextMenu(){document.getElementById('context-menu').style.display='none'}
+
+function toggleDropdown(){
+  const m=document.getElementById('actionMenu');
+  m.classList.toggle('show');
+}
+function closeDropdown(){
+  const m=document.getElementById('actionMenu');
+  if(m)m.classList.remove('show');
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.dropdown')){
+    const m=document.getElementById('actionMenu');
+    if(m)m.classList.remove('show');
+  }
+});
+
+const viewport=document.getElementById('viewport');
+const svgEl=document.getElementById('canvas');
+
+svgEl.addEventListener('mousedown',function(e){
+  if(e.button===2)return;
+  if(document.getElementById('inline-editor').style.display==='block')return;
+  const resizeHandle=e.target.closest('[data-resize]');
+  if(resizeHandle){
+    const nid=parseInt(resizeHandle.getAttribute('data-resize'));
+    const node=nodeMap[nid];
+    if(node){
+      isResizing=true;resizeNode=node;
+      resizeStartX=e.clientX;resizeStartW=node.customWidth>0?node.customWidth:node.width;
+      viewport.classList.add('no-select');
+      e.preventDefault();
+    }
+    return;
+  }
+  const pt=svgPoint(e);
+  const node=findNodeAt(pt.x,pt.y);
+  if(node){
+    selectNode(node);
+    longPressTimer=setTimeout(()=>{
+      if(node.parent){
+        isDragging=true;dragNode=node;
+        viewport.classList.add('dragging-node');
+        viewport.classList.add('no-select');
+        toast('拖拽中：释放到目标节点以移动（+'+node.countDescendants()+'）');
+      }
+    },350);
+    dragStartX=e.clientX;dragStartY=e.clientY;
+  }else{
+    isPanning=true;panStartX=e.clientX;panStartY=e.clientY;
+    panStartPanX=panX;panStartPanY=panY;viewport.classList.add('grabbing');
+    viewport.classList.add('no-select');
+  }
+});
+
+svgEl.addEventListener('mousemove',function(e){
+  if(isResizing&&resizeNode){
+    e.preventDefault();
+    const dx=(e.clientX-resizeStartX)/zoom;
+    const newW=Math.max(60,Math.round(resizeStartW+dx));
+    resizeNode.customWidth=newW;
+    rebuildMap();render();
+    return;
+  }
+  if(isPanning){
+    e.preventDefault();
+    panX=panStartPanX+(e.clientX-panStartX);
+    panY=panStartPanY+(e.clientY-panStartY);
+    updateTransform();return;
+  }
+  if(isDragging&&dragNode){
+    e.preventDefault();
+    if(Math.abs(e.clientX-dragStartX)>5||Math.abs(e.clientY-dragStartY)>5){
+      clearTimeout(longPressTimer);
+    }
+    const pt=svgPoint(e);
+    const target=findNodeAt(pt.x,pt.y);
+    if(target&&target!==dragNode&&!dragNode.isDescendantOf(target)){
+      dropTarget=target;
+      const relY=(pt.y-target.y)/(target.height/2);
+      if(relY<-0.4&&target.parent){
+        dropAction='before';
+      }else if(relY>0.4&&target.parent){
+        dropAction='after';
+      }else{
+        dropAction='child';
+      }
+    }else{
+      dropTarget=null;dropAction='child';
+    }
+    render();
+    const world=document.getElementById('world');
+    if(dropTarget){
+      if(dropAction==='child'){
+        const hl=document.createElementNS(SVG_NS,'rect');
+        hl.setAttribute('class','drop-highlight');
+        hl.setAttribute('x',dropTarget.x-3);hl.setAttribute('y',dropTarget.y-dropTarget.height/2-3);
+        hl.setAttribute('width',dropTarget.width+6);hl.setAttribute('height',dropTarget.height+6);
+        hl.setAttribute('rx','8');hl.setAttribute('fill','none');
+        hl.setAttribute('stroke','#50C878');hl.setAttribute('stroke-width','3');
+        hl.setAttribute('stroke-dasharray','6 3');
+        world.appendChild(hl);
+      }else{
+        const lineY=dropAction==='before'
+          ?dropTarget.y-dropTarget.height/2-2
+          :dropTarget.y+dropTarget.height/2+2;
+        const line=document.createElementNS(SVG_NS,'line');
+        line.setAttribute('x1',dropTarget.x-8);line.setAttribute('y1',lineY);
+        line.setAttribute('x2',dropTarget.x+dropTarget.width+8);line.setAttribute('y2',lineY);
+        line.setAttribute('stroke','#4A90D9');line.setAttribute('stroke-width','3');
+        line.setAttribute('stroke-linecap','round');
+        world.appendChild(line);
+        const dot=document.createElementNS(SVG_NS,'circle');
+        dot.setAttribute('cx',dropAction==='before'?dropTarget.x-8:dropTarget.x+dropTarget.width+8);
+        dot.setAttribute('cy',lineY);dot.setAttribute('r','4');
+        dot.setAttribute('fill','#4A90D9');
+        world.appendChild(dot);
+        const label=document.createElementNS(SVG_NS,'text');
+        label.setAttribute('x',dropTarget.x+dropTarget.width+20);
+        label.setAttribute('y',lineY+1);
+        label.setAttribute('font-size','11');label.setAttribute('fill','#4A90D9');
+        label.setAttribute('dominant-baseline','middle');
+        label.textContent=dropAction==='before'?'↑ 插入前方':'↓ 插入后方';
+        world.appendChild(label);
+      }
+    }
+    const ghostG=document.createElementNS(SVG_NS,'g');
+    renderDragGhost(dragNode,ghostG);
+    world.appendChild(ghostG);
+    return;
+  }
+  if(longPressTimer){
+    if(Math.abs(e.clientX-dragStartX)>5||Math.abs(e.clientY-dragStartY)>5){
+      clearTimeout(longPressTimer);longPressTimer=null;
+    }
+  }
+});
+
+svgEl.addEventListener('mouseup',function(e){
+  clearTimeout(longPressTimer);longPressTimer=null;
+  if(isResizing&&resizeNode){
+    isResizing=false;resizeNode=null;
+    viewport.classList.remove('no-select');
+    pushHistory();
+    return;
+  }
+  if(isDragging&&dragNode){
+    if(dropTarget){
+      pushHistory();
+      dragNode.parent.removeChild(dragNode);
+      if(dropAction==='child'){
+        dropTarget.addChild(dragNode);
+        if(dropTarget.collapsed)dropTarget.collapsed=false;
+        toast('已移入：'+dropTarget.firstLine()+' (+'+dragNode.countDescendants()+')');
+      }else if(dropAction==='before'){
+        const p=dropTarget.parent;
+        const idx=p.children.indexOf(dropTarget);
+        p.children.splice(idx,0,dragNode);
+        dragNode.parent=p;
+        toast('已插入：'+dropTarget.firstLine()+' 前方');
+      }else{
+        const p=dropTarget.parent;
+        const idx=p.children.indexOf(dropTarget);
+        p.children.splice(idx+1,0,dragNode);
+        dragNode.parent=p;
+        toast('已插入：'+dropTarget.firstLine()+' 后方');
+      }
+      rebuildMap();
+    }
+    isDragging=false;dragNode=null;dropTarget=null;dropAction='child';
+    viewport.classList.remove('dragging-node');viewport.classList.remove('no-select');render();return;
+  }
+  if(isPanning){isPanning=false;viewport.classList.remove('grabbing');viewport.classList.remove('no-select')}
+});
+
+svgEl.addEventListener('dblclick',function(e){
+  clearTimeout(longPressTimer);longPressTimer=null;
+  if(isDragging){isDragging=false;dragNode=null;dropTarget=null;viewport.classList.remove('dragging-node');viewport.classList.remove('no-select')}
+  const pt=svgPoint(e);
+  const node=findNodeAt(pt.x,pt.y);
+  if(node){selectNode(node);startInlineEdit(node)}
+});
+
+svgEl.addEventListener('wheel',function(e){
+  e.preventDefault();
+  const rect=svgEl.getBoundingClientRect();
+  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  const oldZoom=zoom;
+  const factor=e.deltaY<0?1.1:1/1.1;
+  zoom=Math.max(0.05,Math.min(5,zoom*factor));
+  panX=mx-(mx-panX)*(zoom/oldZoom);
+  panY=my-(my-panY)*(zoom/oldZoom);
+  render();
+},{passive:false});
+
+svgEl.addEventListener('click',function(e){
+  const collapseBtn=e.target.closest('[data-collapse]');
+  if(collapseBtn){
+    const nid=parseInt(collapseBtn.getAttribute('data-collapse'));
+    const node=nodeMap[nid];
+    if(node){
+      const oldX=node.x,oldY=node.y;
+      pushHistory();node.collapsed=!node.collapsed;
+      rebuildMap();
+      panX+=(oldX-node.x)*zoom;
+      panY+=(oldY-node.y)*zoom;
+      render();
+    }
+    return;
+  }
+  const nodeEl=e.target.closest('.mind-node');
+  if(!nodeEl){selectedNode=null;render()}
+});
+
+svgEl.addEventListener('contextmenu',function(e){
+  e.preventDefault();
+  const pt=svgPoint(e);
+  const node=findNodeAt(pt.x,pt.y);
+  if(node){
+    selectNode(node);
+    const menu=document.getElementById('context-menu');
+    menu.style.display='block';
+    const menuWidth=menu.offsetWidth||140;
+    const menuHeight=menu.offsetHeight||300;
+    let left=e.clientX;
+    let top=e.clientY;
+    if(left+menuWidth>window.innerWidth)left=window.innerWidth-menuWidth-10;
+    if(top+menuHeight>window.innerHeight)top=window.innerHeight-menuHeight-10;
+    if(left<0)left=10;
+    if(top<0)top=10;
+    menu.style.left=left+'px';
+    menu.style.top=top+'px';
+    const colorRow=document.getElementById('color-picker-row');
+    const colorSep=document.getElementById('color-sep');
+    if(getLevel(node)>=1){
+      colorRow.style.display='flex';
+      colorSep.style.display='block';
+      colorRow.innerHTML='';
+      const currentColor=getNodeBranchColor(node);
+      for(const c of BRANCH_COLORS){
+        const sw=document.createElement('div');
+        sw.className='color-swatch'+(c===currentColor?' selected':'');
+        sw.style.background=c;
+        sw.onclick=function(){pushHistory();setUserColor(node,c);rebuildMap();render();hideContextMenu()};
+        colorRow.appendChild(sw);
+      }
+    } else {
+      colorRow.style.display='none';
+      colorSep.style.display='none';
+    }
+  }else{hideContextMenu()}
+});
+
+document.addEventListener('click',function(e){if(!e.target.closest('#context-menu'))hideContextMenu()});
+
+document.addEventListener('keydown',function(e){
+  if(document.getElementById('edit-modal').classList.contains('show')||
+     document.getElementById('import-modal').classList.contains('show'))return;
+  if(document.getElementById('inline-editor').style.display==='block')return;
+  const ctrl=e.ctrlKey||e.metaKey;
+  if(ctrl&&e.key==='z'){e.preventDefault();undo();return}
+  if(ctrl&&e.key==='y'){e.preventDefault();redo();return}
+  if(ctrl&&e.key==='x'){e.preventDefault();cutNode();return}
+  if(ctrl&&e.key==='c'){e.preventDefault();copyNode();copyAsStructuredText();return}
+  if(ctrl&&e.key==='v'){e.preventDefault();pasteNode();return}
+  if(e.key==='Delete'||e.key==='Backspace'){if(selectedNode)deleteNode()}
+  else if(e.key==='Tab'){e.preventDefault();addChild()}
+  else if(e.key==='Enter'){e.preventDefault();addSibling()}
+  else if(e.key==='F2'){e.preventDefault();editNode()}
+  else if(e.key===' '){e.preventDefault();toggleCollapse()}
+  else if(e.key==='='||e.key==='+'){e.preventDefault();zoomIn()}
+  else if(e.key==='-'){e.preventDefault();zoomOut()}
+  else if(e.key==='0'){e.preventDefault();fitScreen()}
+  else if(e.key==='F11'){e.preventDefault();toggleFullscreen()}
+  else if(e.key==='ArrowRight'&&selectedNode){
+    if(selectedNode.children.length>0&&!selectedNode.collapsed)selectNode(selectedNode.children[0]);
+  }else if(e.key==='ArrowLeft'&&selectedNode&&selectedNode.parent){
+    selectNode(selectedNode.parent);
+  }else if(e.key==='ArrowDown'&&selectedNode&&selectedNode.parent){
+    const siblings=selectedNode.parent.children;
+    const idx=siblings.indexOf(selectedNode);
+    if(idx<siblings.length-1)selectNode(siblings[idx+1]);
+  }else if(e.key==='ArrowUp'&&selectedNode&&selectedNode.parent){
+    const siblings=selectedNode.parent.children;
+    const idx=siblings.indexOf(selectedNode);
+    if(idx>0)selectNode(siblings[idx-1]);
+  }
+});
+
+document.getElementById('editText').addEventListener('keydown',function(e){
+  if(e.key==='Escape')closeEdit();
+});
+document.getElementById('importText').addEventListener('keydown',function(e){
+  if(e.key==='Escape')closeImport();
+});
+
+let touchStartTime=0,touchStartNode=null,touchMoved=false;
+svgEl.addEventListener('touchstart',function(e){
+  if(e.touches.length!==1)return;
+  const touch=e.touches[0];
+  const fakeE={clientX:touch.clientX,clientY:touch.clientY,button:0};
+  const pt=svgPoint(fakeE);
+  const node=findNodeAt(pt.x,pt.y);
+  touchStartTime=Date.now();touchMoved=false;
+  if(node){
+    touchStartNode=node;
+    longPressTimer=setTimeout(()=>{
+      if(node.parent){isDragging=true;dragNode=node;viewport.classList.add('no-select');toast('拖拽中')}
+    },500);
+  }else{
+    isPanning=true;panStartX=touch.clientX;panStartY=touch.clientY;
+    panStartPanX=panX;panStartPanY=panY;viewport.classList.add('no-select');
+  }
+},{passive:true});
+
+svgEl.addEventListener('touchmove',function(e){
+  if(e.touches.length!==1)return;
+  const touch=e.touches[0];touchMoved=true;clearTimeout(longPressTimer);
+  if(isPanning){
+    panX=panStartPanX+(touch.clientX-panStartX);
+    panY=panStartPanY+(touch.clientY-panStartY);
+    updateTransform();
+  }
+  if(isDragging&&dragNode){
+    const fakeE={clientX:touch.clientX,clientY:touch.clientY};
+    const pt=svgPoint(fakeE);
+    const target=findNodeAt(pt.x,pt.y);
+    if(target&&target!==dragNode&&!dragNode.isDescendantOf(target)){
+      dropTarget=target;
+      const relY=(pt.y-target.y)/(target.height/2);
+      if(relY<-0.4&&target.parent)dropAction='before';
+      else if(relY>0.4&&target.parent)dropAction='after';
+      else dropAction='child';
+    }else{dropTarget=null;dropAction='child'}
+    render();
+  }
+},{passive:true});
+
+svgEl.addEventListener('touchend',function(e){
+  clearTimeout(longPressTimer);
+  if(isDragging&&dragNode){
+    if(dropTarget){
+      pushHistory();
+      dragNode.parent.removeChild(dragNode);
+      if(dropAction==='child'){
+        dropTarget.addChild(dragNode);
+        if(dropTarget.collapsed)dropTarget.collapsed=false;
+        toast('已移入：'+dropTarget.firstLine());
+      }else if(dropAction==='before'){
+        const p=dropTarget.parent;
+        const idx=p.children.indexOf(dropTarget);
+        p.children.splice(idx,0,dragNode);dragNode.parent=p;
+        toast('已插入前方');
+      }else{
+        const p=dropTarget.parent;
+        const idx=p.children.indexOf(dropTarget);
+        p.children.splice(idx+1,0,dragNode);dragNode.parent=p;
+        toast('已插入后方');
+      }
+      rebuildMap();
+    }
+    isDragging=false;dragNode=null;dropTarget=null;dropAction='child';viewport.classList.remove('no-select');render();return;
+  }
+  if(isPanning){isPanning=false;viewport.classList.remove('no-select');return}
+  if(!touchMoved&&touchStartNode&&(Date.now()-touchStartTime<300)){selectNode(touchStartNode)}
+  touchStartNode=null;
+},{passive:true});
+
+const SAMPLE_TEXT=`思维导图
+\t主题一
+\t\t子项A
+\t\t子项B
+\t\t\t细节1
+\t\t\t细节2
+\t主题二
+\t\t子项C
+\t\t子项D`;
+
+(function init(){
+  let isFirstLoad=false;
+  try{
+    currentFileName=localStorage.getItem('mindmap_current_file')||'';
+    const saved=localStorage.getItem('mindmap_data');
+    if(saved){
+      root=parseText(saved);
+    }else{
+      root=parseText(SAMPLE_TEXT);
+      isFirstLoad=true;
+    }
+    const viewStr=localStorage.getItem('mindmap_view');
+    if(viewStr){
+      const v=JSON.parse(viewStr);
+      zoom=v.zoom||1;panX=v.panX||0;panY=v.panY||0;
+    }
+  }catch(e){
+    root=parseText(SAMPLE_TEXT);
+    isFirstLoad=true;
+  }
+  if(isFirstLoad&&root){
+    (function collapseBelow(n,d){
+      if(d>=3&&n.children.length>0)n.collapsed=true;
+      for(const c of n.children)collapseBelow(c,d+1);
+    })(root,0);
+  }
+  rebuildMap();
+  function clearOldBranchColors(n){
+    if(!n._userColor)n._branchColor=null;
+    for(const c of n.children)clearOldBranchColors(c);
+  }
+  function rebuildUsedColors(n){
+    if(n._branchColor)usedBranchColors.add(n._branchColor);
+    for(const c of n.children)rebuildUsedColors(c);
+  }
+  function assignBranchColors(n,parentColor){
+    const lvl=getLevel(n);
+    if(lvl===0){
+      for(const c of n.children)assignBranchColors(c,null);
+    }else if(lvl===1){
+      if(!n._branchColor){
+        n._branchColor=pickBranchColor(null);
+        usedBranchColors.add(n._branchColor);
+      }
+      for(const c of n.children)assignBranchColors(c,n._branchColor);
+    }else if(lvl>=2){
+      if(!n._branchColor){
+        n._branchColor=parentColor||pickBranchColor(null);
+        usedBranchColors.add(n._branchColor);
+      }
+      for(const c of n.children)assignBranchColors(c,n._branchColor);
+    }
+  }
+  function checkBranchColors(){
+    const l1nodes=[];
+    (function walk(n){if(getLevel(n)===1)l1nodes.push(n);for(const c of n.children)walk(c)})(root);
+    const colorMap=new Map();
+    for(const n of l1nodes){
+      if(!colorMap.has(n._branchColor))colorMap.set(n._branchColor,[]);
+      colorMap.get(n._branchColor).push(n);
+    }
+    if(usedBranchColors.size<MAX_USED_COLORS){
+      for(const [color,nodes] of colorMap){
+        if(nodes.length>1){
+          for(let i=1;i<nodes.length;i++){
+            const avoid=color;
+            nodes[i]._branchColor=pickBranchColor(avoid);
+            usedBranchColors.add(nodes[i]._branchColor);
+          }
+        }
+      }
+    }
+  }
+  if(root)clearOldBranchColors(root);
+  usedBranchColors=new Set();
+  if(root)assignBranchColors(root,null);
+  if(root)checkBranchColors();
+  render();
+  if(panX===0&&panY===0&&zoom===1)setTimeout(fitScreen,100);
+  
+  // 初始化云同步
+  lastContentHash = getContentHash();
+  localVersion = getLocalVersion();
+  activeFileName = currentFileName;  // 设置当前被监督的文件
+  
+  // 使用IIFE来允许await
+  (async function() {
+    try {
+      await initSyncSheet();
+      console.log('[初始化] 表头初始化完成');
+    } catch (e) {
+      console.log('[初始化] 表头初始化失败:', e);
+    }
+    startSyncTimers();
+    
+    // 启动后先显示本地数据（已在上面的代码完成），然后后台检查云端更新
+    setTimeout(() => {
+      checkCloudVersion();
+    }, 3000);  // 延迟3秒后后台检查云端
+  })();
+  
+  // 监听IFRAME文件管理页面的消息
+  window.addEventListener('message', function(e){
+    const data = e.data;
+    if(!data || !data.type) return;
+    
+    if(data.type === 'fileDeleted'){
+      // 被删除的文件是当前打开的文件，重置为默认页
+      if(currentFileName === data.name){
+        currentFileName = '';
+        localStorage.removeItem('mindmap_current_file');
+        root = parseText(SAMPLE_TEXT);
+        selectedNode = null;
+        lastContentHash = getContentHash();
+        setLocalVersion(0);
+        rebuildMap();
+        render();
+        setTimeout(fitScreen, 100);
+        toast('已打开默认页');
+      }
+    }
+    
+    if(data.type === 'fileRenamed'){
+      // 重命名的是当前打开的文件，更新引用
+      if(currentFileName === data.oldName){
+        currentFileName = data.newName;
+        localStorage.setItem('mindmap_current_file', data.newName);
+      }
+    }
+    
+    if(data.type === 'openFile'){
+      openNamedFile(data.name);
+    }
+    
+    if(data.type === 'fileSaved'){
+      // 文件管理页面保存了新文件
+      renderFileList();
+    }
+    
+    if(data.type === 'syncComplete'){
+      // 一键同步完成
+      toast(`同步完成 | 拉取:${data.pulled} 上传:${data.uploaded}`);
+    }
+    
+    if(data.type === 'cloudFilesRefreshed'){
+      toast(`云端刷新完成 | ${data.count}个文件`);
+    }
+  });
+})();
+</script>
 </body>
 </html>
